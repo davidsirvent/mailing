@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div id="config" class="container">
+
+    <div class="row">
+        <div class="col col-title">
+            Configuracion
+        </div>        
+        <div class="col col-body">            
+            <form method="POST" action="{{ url_for('main.config') }}">
+                {{ form.csrf_token }}
+                {{ form.sender_address.label }} {{ form.sender_address(size=20) }}
+                <input type="submit" value="Enviar">
+            </form>
+        </div>                    
+    </div>
+</div>
+
+{% endblock %}

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, flash
 from . import db
 
 import json
@@ -7,15 +7,26 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from .models import Config
+from .forms import ConfigForm
 
 
 main = Blueprint('main', __name__)
 
 
 @main.route('/')
-def index():
-    send()
+def index():    
     return render_template('main/index.html')
+
+
+@main.route('/config', methods=('GET', 'POST'))
+def config():
+    form = ConfigForm()
+    if form.validate_on_submit():
+        flash("INFO: Todo ok.")
+    else:    
+        flash("ERROR.")
+
+    return render_template('main/configuration.html', form=form)
 
 
 def send():
