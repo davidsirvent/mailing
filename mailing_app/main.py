@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash
+from flask import Blueprint, render_template, flash, request
 from . import db
 
 import json
@@ -18,15 +18,35 @@ def index():
     return render_template('main/index.html')
 
 
-@main.route('/config', methods=('GET', 'POST'))
+@main.route('/config', methods=['GET', 'POST'])
 def config():
-    form = ConfigForm()
-    if form.validate_on_submit():
-        flash("INFO: Todo ok.")
-    else:    
-        flash("ERROR.")
 
-    return render_template('main/configuration.html', form=form)
+    config = Config.query.get(1)
+    form = ConfigForm()
+    
+    if form.validate_on_submit():
+
+        if config is not None:
+            config.sender_address = form.sender_address.data
+            config.password = form.password.data
+            config.smtp_server = form.smtp_server.data
+            config.smtp_port = form.smtp_port.data
+        else:
+            config = Config(sender_address=form.sender_address.data, password=form.password.data, smtp_server=form.smtp_server.data, smtp_port=form.smtp_port.data)
+            db.session.add(config)
+        
+        try:
+            db.session.commit()
+            flash("INFO: Configuración guardada.")         
+        except Exception as error:
+            flash("ERROR: " + error.args[0])
+                
+    else:    
+        for errorMessages in form.errors.items():
+            for err in errorMessages:
+                flash("ERROR: " + err)
+
+    return render_template('main/configuration.html', form=form, config=config)
 
 
 def send():

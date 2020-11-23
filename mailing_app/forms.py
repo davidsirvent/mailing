@@ -1,10 +1,10 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField
-from wtforms.validators import DataRequired
+from wtforms import StringField, IntegerField, PasswordField
+from wtforms.validators import DataRequired, Email
 
 
 class ConfigForm(FlaskForm):
-    sender_address = StringField('Sender Email', validators=[DataRequired()])
-    password = StringField('password', validators=[DataRequired()])
-    smtp_server = StringField('SMTP server', validators=[DataRequired()])
-    smtp_port = IntegerField('SMTP port', validators=[DataRequired()])
+    sender_address = StringField('Correo del remitente', validators=[DataRequired(), Email("Correo no válido.")])
+    password = PasswordField('Clave', validators=[DataRequired()])
+    smtp_server = StringField('Servidor SMTP', validators=[DataRequired()])
+    smtp_port = IntegerField('Puerto SMTP', validators=[DataRequired("Introduzca un puerto SMTP válido.")])

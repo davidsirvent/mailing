@@ -5,16 +5,31 @@
 <div id="config" class="container">
 
     <div class="row justify-content-center">
-        <div class="col-10 col-lg-5 {{ col_title() }}">
+        <div class="col-7 col-lg-7 {{ col_title() }}">
             Configuracion
         </div> 
     </div>
     <div class="row justify-content-center">
-        <div class="col-10 col-lg-5 {{ col_body() }}">            
-            <form method="POST" action="{{ url_for('main.config') }}">
+        <div class="col-7 col-lg-7 {{ col_body() }}">            
+            <form method="POST">
                 {{ form.csrf_token }}
-                {{ form.sender_address.label }} {{ form.sender_address(size=20) }}
-                <input type="submit" value="Enviar">
+                <div class="form-group">
+                    {{ form.sender_address.label(for="sender_address") }}
+                    {{ form.sender_address(type="email", class="form-control", value=config.sender_address) }}                    
+                </div>
+                <div class="form-group">
+                    {{ form.password.label(for="password") }}
+                    {{ form.password(class="form-control") }}                    
+                </div>
+                <div class="form-group">
+                    {{ form.smtp_server.label(for="smtp_server") }}
+                    {{ form.smtp_server(class="form-control",  value=config.smtp_server) }}                    
+                </div>
+                <div class="form-group">
+                    {{ form.smtp_port.label(for="smtp_port") }}
+                    {{ form.smtp_port(class="form-control", value=config.smtp_port) }}                    
+                </div>
+                <input type="submit" class="btn btn-primary" value="Enviar">
             </form>
         </div>                    
     </div>
