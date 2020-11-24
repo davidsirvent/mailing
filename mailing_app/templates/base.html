@@ -10,8 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/bootstrap.min.css') }}"
-    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T">
+  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/bootstrap.min.css') }}" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
   <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png') }}">
 
@@ -31,39 +30,16 @@
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="{{ url_for('static', filename='bootstrap/jquery-3.3.1.js') }}"></script>
-  <script src="{{ url_for('static', filename='bootstrap/popper.min.js') }}"
-    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"></script>
-  <script src="{{ url_for('static', filename='bootstrap/bootstrap.min.js') }}"
-    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"></script>
+  <script src="{{ url_for('static', filename='bootstrap/popper.min.js') }}" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"></script>
+  <script src="{{ url_for('static', filename='bootstrap/bootstrap.min.js') }}" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"></script>
 
-  <!-- Quilljs javascript -->
+  <!-- Quill javascript -->
   <script src="{{ url_for('static', filename='quill/quill.js') }}"></script>
   <script src="{{ url_for('static', filename='quill/quill.htmlEditButton.min.js') }}"></script>
-  <script>
-    Quill.register("modules/htmlEditButton", htmlEditButton);
+  <script src="{{ url_for('static', filename='quill/quill_init.js') }}"></script>  
 
-    var quill = new Quill('#editor', {
-      /* Original complete toolbar */
-      /* https://github.com/KillerCodeMonkey/ngx-quill/issues/295 */
-      
-      modules: {
-        htmlEditButton: {}, /* https://github.com/benwinding/quill-html-edit-button */    
-        'syntax': true,
-        'toolbar': [
-          [{ 'font': [] }, { 'size': [] }],
-          ['bold', 'italic', 'underline', 'strike'],
-          [{ 'color': [] }, { 'background': [] }],
-          [{ 'script': 'super' }, { 'script': 'sub' }],
-          [{ 'header': '1' }, { 'header': '2' }, 'blockquote', 'code-block'],
-          [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],          
-          ['direction', { 'align': [] }],
-          ['link', 'image', 'video'],
-          ['clean']
-        ]        
-      },
-      theme: 'snow'
-    });
-  </script>
+  <!-- Custom JS -->
+  <script src="{{ url_for('static', filename='js/custom.js') }}"></script>  
 
 </body>
 

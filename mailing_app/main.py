@@ -7,15 +7,19 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from .models import Config
-from .forms import ConfigForm
+from .forms import ConfigForm, MsgForm
 
 
 main = Blueprint('main', __name__)
 
 
 @main.route('/')
-def index():    
-    return render_template('main/index.html')
+def index():
+
+    form = MsgForm()
+
+
+    return render_template('main/index.html', form=form)
 
 
 @main.route('/config', methods=['GET', 'POST'])
