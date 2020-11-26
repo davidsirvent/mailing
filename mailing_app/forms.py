@@ -10,5 +10,5 @@ class ConfigForm(FlaskForm):
     smtp_port = IntegerField('Puerto SMTP', validators=[DataRequired("Introduzca un puerto SMTP válido.")])
 
 class MsgForm(FlaskForm):
-    subject = StringField('Asunto', validators=[DataRequired()])
-    msg = StringField('Mensaje', validators=[DataRequired()])
+    subject = StringField('Asunto', validators=[DataRequired("El asunto no puede estar vacio")])
+    msg = StringField('Mensaje', validators=[DataRequired("El mensaje no puede estar vacio")])

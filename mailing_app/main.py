@@ -6,20 +6,35 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+from smtplib import SMTPRecipientsRefused, SMTPHeloError, SMTPSenderRefused, SMTPDataError, SMTPNotSupportedError, SMTPAuthenticationError, SMTPException
+from socket import timeout
+from ssl import SSLError
+
 from .models import Config
 from .forms import ConfigForm, MsgForm
 
 
 main = Blueprint('main', __name__)
 
-
-@main.route('/')
+@main.route('/', methods=['GET', 'POST'])
 def index():
+
+    recipients = ["dav.sir.can@gmail.com", "dav.sir.can@gmail.com", "dav.sir.can@gmail.com"]
 
     form = MsgForm()
 
+    if form.validate_on_submit():
 
-    return render_template('main/index.html', form=form)
+        for recipient in recipients:        
+            result = send(recipient, form.subject.data, form.msg.data)
+            flash("(" + recipient + ") " + result)
+    
+    else:    
+        for field, errorMessages in form.errors.items():
+            for err in errorMessages:
+                flash("ERROR: " + err)
+
+    return render_template('main/index.html', form=form, recipients=recipients)
 
 
 @main.route('/config', methods=['GET', 'POST'])
@@ -46,36 +61,71 @@ def config():
             flash("ERROR: " + error.args[0])
                 
     else:    
-        for errorMessages in form.errors.items():
+        for field, errorMessages in form.errors.items():
             for err in errorMessages:
                 flash("ERROR: " + err)
 
     return render_template('main/configuration.html', form=form, config=config)
 
 
-def send():
-    message = '<H2>This is a</H3><H1>MESSAGE</H1>'
+def send(recipient: str, subject: str, message: str):
+        
+    login_error = ""
+    send_report = ""
 
     config = Config.query.one()
+        
+    # set up the SMTP server (2)
+    try:
+        # set up the SMTP server
+        s = smtplib.SMTP_SSL(host=config.smtp_server, port=config.smtp_port, timeout=5)
+        s.login(config.sender_address, config.password)    
 
-    # set up the SMTP server
-    s = smtplib.SMTP_SSL(host=config.smtp_server, port=config.smtp_port)    
-    s.login(config.sender_address, config.password)
+        # create a message
+        msg = MIMEMultipart()       
 
-    # create a message
-    msg = MIMEMultipart()       
+        # setup the parameters of the message
+        msg['From'] = config.sender_address
+        msg['To'] = recipient
+        msg['Subject'] = subject
 
-    # setup the parameters of the message
-    msg['From'] = config.sender_address
-    msg['To'] = 'dav.sir.can@gmail.com'
-    msg['Subject'] = "This is TEST"
+        # add in the message body
+        msg.attach(MIMEText(message, 'html'))
 
-    # add in the message body
-    msg.attach(MIMEText(message, 'html'))
+        # send the message via the server set up earlier.
+        try:
+            s.send_message(msg)
+            send_report = "INFO. El correo ha sido enviado correctamente."
+        except SMTPRecipientsRefused:
+            send_report = "ERROR. El servidor ha rechazado la dirección de destino."
+        except SMTPHeloError:
+            send_report = "ERROR: El servidor ha rechazado la conexión."
+        except SMTPSenderRefused:
+            send_report = "ERROR: El servidor ha rechazado la dirección del remitente."
+        except SMTPDataError:
+            send_report = "ERROR: El servidor ha respondido de manera inesperada."
+        except SMTPNotSupportedError:
+            send_report = "ERROR: El servidor no soporta una o varias opciones incluidas en el mensaje."   
+                
+        # Terminate the SMTP session and close the connection
+        del msg
+        s.quit()
+        return send_report
 
-    # send the message via the server set up earlier.
-    s.send_message(msg)
-    del msg
-
-    # Terminate the SMTP session and close the connection
-    s.quit()
+    except SMTPHeloError:
+        login_error = "ERROR: El servidor ha rechazado la conexión."
+    except SMTPAuthenticationError:
+        login_error = "ERROR: El servidor no reconoce la combinación de usuario/clave."
+    except SMTPNotSupportedError:
+        login_error = "ERROR: El comando AUTH no es soportado por el servidor."
+    except SMTPException:
+        login_error = "ERROR: No se encontró un método válido de autenticación."
+    except timeout:
+        login_error = "ERROR. El servidor tardó demasiado en contestar."
+    except SSLError:
+        login_error = "ERROR. Problema relacionado con SSL."
+    except:
+        login_error = "ERROR. No especificado."
+    
+    return login_error
+    
