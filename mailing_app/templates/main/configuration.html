@@ -7,31 +7,31 @@
     <div class="row justify-content-center">
         <div class="col-7 col-lg-7 {{ col_title() }}">
             Configuracion
-        </div> 
+        </div>
     </div>
     <div class="row justify-content-center">
-        <div class="col-7 col-lg-7 {{ col_body() }}">            
+        <div class="col-7 col-lg-7 {{ col_body() }}">
             <form method="POST">
                 {{ form.csrf_token }}
                 <div class="form-group">
                     {{ form.sender_address.label(for="sender_address") }}
-                    {{ form.sender_address(type="email", class="form-control", value=config.sender_address) }}                    
+                    {{ form.sender_address(type="email", class="form-control", value=config.sender_address) }}
                 </div>
                 <div class="form-group">
                     {{ form.password.label(for="password") }}
-                    {{ form.password(class="form-control") }}                    
+                    {{ form.password(class="form-control") }}
                 </div>
                 <div class="form-group">
                     {{ form.smtp_server.label(for="smtp_server") }}
-                    {{ form.smtp_server(class="form-control",  value=config.smtp_server) }}                    
+                    {{ form.smtp_server(class="form-control",  value=config.smtp_server) }}
                 </div>
                 <div class="form-group">
                     {{ form.smtp_port.label(for="smtp_port") }}
-                    {{ form.smtp_port(class="form-control", value=config.smtp_port) }}                    
+                    {{ form.smtp_port(class="form-control", value=config.smtp_port) }}
                 </div>
-                <input type="submit" class="btn btn-primary" value="Enviar">
+                {{ form.save_btn(class="btn btn-primary")}}                
             </form>
-        </div>                    
+        </div>
     </div>
 </div>
 

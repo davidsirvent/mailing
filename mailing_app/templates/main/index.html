@@ -4,8 +4,8 @@
 
 <div id="main" class="container mt-2">
 
-    <div class="row">        
-        <div class="col-3 mr-5">
+    <div class="row">
+        <div class="col-3 col-sm-4 mr-5">
             <!-- Contact list -->
             <div class="row">
                 <div class="col {{ col_title() }}">
@@ -16,13 +16,13 @@
                 <div class="col {{ col_body() }}">
                     <ul class="list-group">
                         {% for recipient in recipients %}
-                        <li class="list-group-item py-1"><img class="mr-2" style="width: 15px;" src="{{ url_for('static', filename='img/mail-contact.png') }}"> {{ recipient }}</li>                        
+                        <li class="list-group-item py-1"><img class="mr-2" style="width: 15px;" src="{{ url_for('static', filename='img/mail-contact.png') }}"> {{ recipient }}</li>
                         {% endfor %}
                     </ul>
-                    
+
                 </div>
             </div>
-        </div> 
+        </div>
 
 
         <div class="col ml1">
@@ -48,20 +48,20 @@
             </div>
             <div class="row mb-5">
                 <div class="col {{ col_body() }}">
-                    <div class="form-group">                        
+                    <div class="form-group">
                         <div id="editor">
-                            
+
                         </div>
                     </div>
                     <form method="POST">
                         {{ form.csrf_token }}
                         {{ form.subject(class="form-control", type="hidden") }}
                         {{ form.msg(class="form-control", type="hidden") }}
-                        <input type="submit" class="btn btn-primary" value="Enviar">
+                        {{ form.send_btn(class="btn btn-primary")}}                        
                     </form>
                 </div>
             </div>
-        </div>               
+        </div>
     </div>
 </div>
 

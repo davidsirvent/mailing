@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div id="report" class="container">
+
+    <div class="row justify-content-center">
+        <div class="col-10 col-lg-10 {{ col_title() }}">
+            Informe del mailing
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-10 col-lg-10 {{ col_body() }}">
+            <table class="table">
+                {% for key, value in report.items() %}
+                <tr>
+                {% if 'INFO' in value %}
+                {% set msg_type = 'text-success' %}
+                {% elif 'ERROR' in value %}
+                {% set msg_type = 'text-danger' %}
+                {% endif %}
+                    <td>{{ key }}</td><td class="{{ msg_type }}">{{ value }}</td>
+                </tr>
+                {% endfor %}            
+            </table>
+            <form method="POST">
+                <!-- Poner botones para imprimir y gudardar. Arriba y abajo -->
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
