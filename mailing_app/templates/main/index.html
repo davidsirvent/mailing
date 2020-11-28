@@ -5,21 +5,38 @@
 <div id="main" class="container mt-2">
 
     <div class="row">
-        <div class="col-3 col-sm-4 mr-5">
+        <div id="col-contacts" class="col-3 col-sm-3 mr-5">
             <!-- Contact list -->
             <div class="row">
                 <div class="col {{ col_title() }}">
                     Lista de contactos
-                </div>
+                </div>                
             </div>
+            <form method="post" enctype="multipart/form-data">
+                {{ formFile.csrf_token }}
+                
+                {{ formFile.file(class="form-control") }}
+                <input type="submit">
+            </form>
             <div class="row">
-                <div class="col {{ col_body() }}">
+                <div class="col {{ col_body_contacts() }} pl-1">
+                    
+                    <table class="table table-striped ml-n1">
+                        {% for recipient in recipients %}
+                        <tr class="py-1">
+                            <td><img style="width: 15px;" src="{{ url_for('static', filename='img/mail-contact.png') }}"></td>
+                            <td><span>{{ recipient }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    
+                    <!--
                     <ul class="list-group">
                         {% for recipient in recipients %}
                         <li class="list-group-item py-1"><img class="mr-2" style="width: 15px;" src="{{ url_for('static', filename='img/mail-contact.png') }}"> {{ recipient }}</li>
                         {% endfor %}
                     </ul>
-
+                    -->
                 </div>
             </div>
         </div>
@@ -53,16 +70,23 @@
 
                         </div>
                     </div>
-                    <form method="POST">
+                    <form id="send_form" method="POST">
                         {{ form.csrf_token }}
                         {{ form.subject(class="form-control", type="hidden") }}
                         {{ form.msg(class="form-control", type="hidden") }}
-                        {{ form.send_btn(class="btn btn-primary")}}                        
+                        {{ form.send_btn(class="btn btn-primary", onclick="waiting()") }}
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<div id="centerbox-shadow">
+    <div id="centerbox">
+        <img class="waiting" src="{{ url_for('static', filename='img/waiting.webp') }}">
+    </div>
+</div>
+
 
 {% endblock %}

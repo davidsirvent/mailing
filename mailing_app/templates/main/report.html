@@ -11,6 +11,14 @@
     </div>
     <div class="row justify-content-center">
         <div class="col-10 col-lg-10 {{ col_body() }}">
+            <form method="POST" class="form-inline mb-2">                                
+                {{ form.csrf_token }}
+                <div class="form-row">
+                    <div class="col">{{ form.sender_address(class="form-control", type="email", placeholder="introduzca email...")}}</div>
+                    <div class="col">{{ form.send_btn(class="btn btn-primary")}}</div>
+                    <div class="col">{{ form.print_btn(class="btn btn-primary", onclick="print()")}}</div>
+                </div>                       
+            </form>
             <table class="table">
                 {% for key, value in report.items() %}
                 <tr>
@@ -22,10 +30,7 @@
                     <td>{{ key }}</td><td class="{{ msg_type }}">{{ value }}</td>
                 </tr>
                 {% endfor %}            
-            </table>
-            <form method="POST">
-                <!-- Poner botones para imprimir y gudardar. Arriba y abajo -->
-            </form>
+            </table>            
         </div>
     </div>
 </div>

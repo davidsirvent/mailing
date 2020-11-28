@@ -4,6 +4,16 @@
     }
 }
 
+tr {
+    line-height: 12px;
+    min-height: 12px;
+    height: 12px; 
+}
+
+
+#col-contacts {
+    overflow: hidden;
+}
 
 #logo { 
     height: 50px;
@@ -21,4 +31,31 @@
 
 .col-body {
     /* See Jinja macro with same name to view CSS inheritance. */    
+}
+
+#centerbox-shadow {
+    display: none;
+    background-color: rgba(0, 0, 0, 0.5);
+    position:absolute;
+    width:100%;
+    height:100%;    
+    top:0;
+    left:0;
+    text-align:center;    
+    z-index: 900;
+}
+
+#centerbox { 
+    position:fixed;
+    width:100%;
+    height:100%;
+    margin: auto -50%;
+    top:46%;
+    left:50%;
+    text-align:center;    
+    z-index: 1000;
+}
+
+.waiting {
+    width:8%;
 }

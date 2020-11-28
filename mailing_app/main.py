@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, flash, request
+from flask import Blueprint, render_template, flash, request, redirect, url_for, session
+from werkzeug.utils import secure_filename
 from . import db
 
 import json
@@ -10,8 +11,11 @@ from smtplib import SMTPRecipientsRefused, SMTPHeloError, SMTPSenderRefused, SMT
 from socket import timeout
 from ssl import SSLError
 
+import locale
+import time
+
 from .models import Config
-from .forms import ConfigForm, MsgForm
+from .forms import ConfigForm, MsgForm, ReportForm, UploadForm
 
 
 main = Blueprint('main', __name__)
@@ -21,25 +25,45 @@ def index():
 
     db.create_all()
 
-    recipients = ["davsircan@gmail.com", "david.error#gmail.com", "dav.sir.can@gmail.com"]
+    # recipients = ["davsircan@gmail.com", "david.error#gmail.com", "dav.sir.can@gmail.com"]
+    recipients = ["david.error#gmail.commmmasdfasdfadfmdddasdfmmd", "1david.error#gmail.com", "dav1id.error#gmail.com", "david.error1#gmail.com", "david.erro2r#gmail.com", "david3.error#gmail.com", "d4avid.error#gmail.com", "david.error3#gmail.com", "da3vid.error#gmail.com", "david.error#gmail.c3om", "david.error3#gmail.com", "david.er4ror#gmail.com", "asdf", "asdfsa", "asdfasgas", "asdfasdfasdf"]
     report = {}
 
+    
     form = MsgForm()
-
     if form.validate_on_submit():
+
         for recipient in recipients:
             result = send(recipient, form.subject.data, form.msg.data)
             # flash("(" + recipient + ") " + result)
-            report[recipient] = result
+            timestamp = time.strftime('%d %b %Y %H:%M:%S')
+            report[recipient] = result + ' (' + timestamp + ')'
 
-        return render_template('main/report.html', report=report)
+        session['report'] =  report        
+        return redirect(url_for('main.report', report=report))
 
     else:
         for field, errorMessages in form.errors.items():
             for err in errorMessages:
                 flash("ERROR: " + err)
 
-    return render_template('main/index.html', form=form, recipients=recipients)
+
+    formFile = UploadForm()
+    if formFile.validate_on_submit():
+        filename = secure_filename(formFile.file.data.filename)
+        formFile.file.data.save('/' + filename)        
+    
+
+    return render_template('main/index.html', form=form, formFile=formFile, recipients=recipients)
+
+
+@main.route('/report', methods=['GET', 'POST'])
+def report():
+    report = session['report']
+
+    form = ReportForm()
+
+    return render_template('main/report.html', report=report, form=form)
 
 
 @main.route('/config', methods=['GET', 'POST'])
