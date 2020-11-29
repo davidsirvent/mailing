@@ -10,6 +10,7 @@ from email.mime.text import MIMEText
 from smtplib import SMTPRecipientsRefused, SMTPHeloError, SMTPSenderRefused, SMTPDataError, SMTPNotSupportedError, SMTPAuthenticationError, SMTPException
 from socket import timeout
 from ssl import SSLError
+from sqlalchemy.orm.exc import NoResultFound
 
 import locale
 import time
@@ -25,42 +26,50 @@ def index():
 
     db.create_all()
 
-    # recipients = ["davsircan@gmail.com", "david.error#gmail.com", "dav.sir.can@gmail.com"]
+    #recipients = []
     recipients = ["david.error#gmail.commmmasdfasdfadfmdddasdfmmd", "1david.error#gmail.com", "dav1id.error#gmail.com", "david.error1#gmail.com", "david.erro2r#gmail.com", "david3.error#gmail.com", "d4avid.error#gmail.com", "david.error3#gmail.com", "da3vid.error#gmail.com", "david.error#gmail.c3om", "david.error3#gmail.com", "david.er4ror#gmail.com", "asdf", "asdfsa", "asdfasgas", "asdfasdfasdf"]
+
     report = {}
 
     
     form = MsgForm()
-    if form.validate_on_submit():
+    if form.send_btn.data:
+        if form.validate_on_submit():
 
-        for recipient in recipients:
-            result = send(recipient, form.subject.data, form.msg.data)
-            # flash("(" + recipient + ") " + result)
-            timestamp = time.strftime('%d %b %Y %H:%M:%S')
-            report[recipient] = result + ' (' + timestamp + ')'
+            for recipient in recipients:
+                result = send(recipient, form.subject.data, form.msg.data)
+                # flash("(" + recipient + ") " + result)
+                timestamp = time.strftime('%d %b %Y %H:%M:%S')
+                report[recipient] = result + ' (' + timestamp + ')'
 
-        session['report'] =  report        
-        return redirect(url_for('main.report', report=report))
+            session['report'] =  report                    
+            return redirect(url_for('main.report', report=report))
 
-    else:
-        for field, errorMessages in form.errors.items():
-            for err in errorMessages:
-                flash("ERROR: " + err)
+        else:
+            for field, errorMessages in form.errors.items():
+                for err in errorMessages:
+                    flash("ERROR: " + err)
 
 
     formFile = UploadForm()
-    if formFile.validate_on_submit():
-        filename = secure_filename(formFile.file.data.filename)
-        formFile.file.data.save('/' + filename)        
-    
+    if formFile.upload_btn.data:
+        if formFile.validate_on_submit():
+            recipients = []           
+            for line in formFile.file.data.readlines():
+                recipients.append(line.decode("utf-8"))
 
+        else:
+            for field, errorMessages in form.errors.items():
+                for err in errorMessages:
+                    flash("ERROR: " + err)
+
+        
     return render_template('main/index.html', form=form, formFile=formFile, recipients=recipients)
 
 
 @main.route('/report', methods=['GET', 'POST'])
 def report():
-    report = session['report']
-
+    report = session['report']    
     form = ReportForm()
 
     return render_template('main/report.html', report=report, form=form)
@@ -108,10 +117,12 @@ def send(recipient: str, subject: str, message: str):
     login_error = ""
     send_report = ""
 
-    config = Config.query.one()
+    
 
     # set up the SMTP server (2)
-    try:
+    try:        
+        config = Config.query.one()
+
         # set up the SMTP server
         s = smtplib.SMTP_SSL(host=config.smtp_server, port=config.smtp_port, timeout=5)
         s.login(config.sender_address, config.password)
@@ -130,7 +141,7 @@ def send(recipient: str, subject: str, message: str):
         # send the message via the server set up earlier.
         try:
             s.send_message(msg)
-            send_report = "INFO. El correo ha sido enviado correctamente."
+            send_report = "INFO. El correo ha sido enviado correctamente."        
         except SMTPRecipientsRefused:
             send_report = "ERROR. El servidor ha rechazado la dirección de destino."
         except SMTPHeloError:
@@ -147,6 +158,8 @@ def send(recipient: str, subject: str, message: str):
         s.quit()
         return send_report
 
+    except NoResultFound:
+        login_error = "ERROR. No se pudo recuperar datos de la configuración."    
     except SMTPHeloError:
         login_error = "ERROR: El servidor ha rechazado la conexión."
     except SMTPAuthenticationError:

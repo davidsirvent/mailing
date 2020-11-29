@@ -21,4 +21,5 @@ class ReportForm(FlaskForm):
     print_btn = SubmitField(label='Imprimir')
 
 class UploadForm(FlaskForm):
-    file = FileField()
+    file = FileField(validators=[DataRequired()])
+    upload_btn = SubmitField(label='Subir')

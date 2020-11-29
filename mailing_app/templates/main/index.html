@@ -12,15 +12,14 @@
                     Lista de contactos
                 </div>                
             </div>
-            <form method="post" enctype="multipart/form-data">
-                {{ formFile.csrf_token }}
-                
-                {{ formFile.file(class="form-control") }}
-                <input type="submit">
-            </form>
             <div class="row">
-                <div class="col {{ col_body_contacts() }} pl-1">
-                    
+                <div class="col {{ col_body() }} text-center">
+                    <button class="btn btn-primary" onclick="uploadForm()">Agregar contactos</button>            
+                    <button class="btn btn-danger">Borrar contactos</button>
+                </div>                
+            </div>            
+            <div class="row">
+                <div class="col {{ col_body_contacts() }} pl-1">                    
                     <table class="table table-striped ml-n1">
                         {% for recipient in recipients %}
                         <tr class="py-1">
@@ -82,11 +81,33 @@
     </div>
 </div>
 
-<div id="centerbox-shadow">
-    <div id="centerbox">
-        <img class="waiting" src="{{ url_for('static', filename='img/waiting.webp') }}">
+<div id="waiting" class="centerbox-shadow">
+    <div class="centerbox">
+        <img class="waiting" src="{{ url_for('static', filename='img/waiting.webp') }}">        
     </div>
 </div>
 
 
+<div id="upload-form" class="centerbox-shadow">
+    <div class="centerbox">        
+        <div id="upload-form-inner-div">
+            <form id="upload-inner-form" method="post" enctype="multipart/form-data">
+                {{ formFile.csrf_token }}
+                <div class="form-group">
+                    <label>Los contactos deben estar en un fichero de texto plano y cada contacto debe ocupar una línea.</label>
+                    {{ formFile.file(class="btn") }}
+                </div>
+                <div class="form-group">
+                    {{ formFile.upload_btn(class="btn btn-primary") }}
+                    <button class="btn btn-danger" onclick="hideUploadForm()">Cancelar subida</button>              
+                </div>
+            </form>
+        </div>        
+    </div>
+</div>
+
+
+
+
 {% endblock %}
+
