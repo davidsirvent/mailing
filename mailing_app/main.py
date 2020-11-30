@@ -41,7 +41,6 @@ def index():
 
             for recipient in recipients:
                 result = send(recipient, form.subject.data, form.msg.data)
-                # flash("(" + recipient + ") " + result)
                 timestamp = time.strftime('%d %b %Y %H:%M:%S')
                 report[recipient] = result + ' (' + timestamp + ')'
 
@@ -53,15 +52,39 @@ def index():
                 for err in errorMessages:
                     flash("ERROR: " + err)
 
+    # Upload msg file
+    formUploadMsg = UploadForm()
+    if formUploadMsg.upload_btn.data:
+        if formUploadMsg.validate_on_submit():
+            msg_txt = ""
+            try:
+                for txt in formUploadMsg.file.data.read():
+                    msg_txt = txt.decode("utf-8")                    
+                    # db.session.add(Recipient(recipient=line))
+            except  Exception as error:
+                flash("ERROR: No se ha podido procesar el fichero")
+            else:
+                pass # db.session.commit()           
+
+        else:
+            for field, errorMessages in form.errors.items():
+                for err in errorMessages:
+                    flash("ERROR: " + err)
+
     # Upload contacts (recipients)
     formFile = UploadForm()
     if formFile.upload_btn.data:
         if formFile.validate_on_submit():
-            recipients = []           
-            for line in formFile.file.data.readlines():
-                recipients.append(line.decode("utf-8"))
-                db.session.add(Recipient(recipient=line.decode("utf-8")))
-            db.session.commit()
+            recipients = []
+            try:
+                for line in formFile.file.data.readlines():
+                    line = line.decode("utf-8")
+                    recipients.append(line)
+                    db.session.add(Recipient(recipient=line))
+            except  Exception as error:
+                flash("ERROR: No se ha podido procesar el fichero")
+            else:
+                db.session.commit()           
 
         else:
             for field, errorMessages in form.errors.items():
@@ -81,7 +104,7 @@ def index():
                 for err in errorMessages:
                     flash("ERROR: " + err)    
 
-    return render_template('main/index.html', form=form, formFile=formFile, formDelete=formDelete ,recipients=recipients)
+    return render_template('main/index.html', form=form, formFile=formFile, formDelete=formDelete, formUploadMsg=formUploadMsg ,recipients=recipients)
 
 
 # Report view (when mailing is sent)

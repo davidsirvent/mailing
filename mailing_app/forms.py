@@ -24,4 +24,4 @@ class UploadForm(FlaskForm):
     upload_btn = SubmitField(label='Subir')
 
 class DeleteForm(FlaskForm):
-    delete_btn = SubmitField(label='Borrar contactos')
+    delete_btn = SubmitField(label='Borrar')

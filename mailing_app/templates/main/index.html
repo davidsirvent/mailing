@@ -18,7 +18,7 @@
                     <table class="mx-auto">
                         <tr>
                             <td>
-                                <button class="btn btn-primary" onclick="uploadForm()">Agregar contactos</button>                                                        
+                                <button class="btn btn-primary" onclick="uploadForm()">Agregar</button>                                                        
                             </td>
                             <td>
                                 <form method="POST">
@@ -66,7 +66,9 @@
                     {{ form.msg.label() }}
                 </div>                
             </div>
-            <div class="row mb-5">
+
+            <!-- Editor option -->
+            <div id="msg-editor" class="row mb-5">
                 <div class="col {{ col_body() }}">
                     <div class="form-group">
                         <div id="editor">
@@ -79,6 +81,13 @@
                         {{ form.msg(class="form-control", type="hidden") }}
                         {{ form.send_btn(class="btn btn-primary", onclick="waiting()") }}
                     </form>
+                </div>
+            </div>
+
+            <!-- File upload option-->
+            <div id="msg-file" class="row mb-5">
+                <div class="col {{ col_body() }}">                    
+                                   
                 </div>
             </div>
         </div>
@@ -109,6 +118,8 @@
         </div>        
     </div>
 </div>
+
+
 
 </textarea>
 
