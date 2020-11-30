@@ -11,14 +11,23 @@
     </div>
     <div class="row justify-content-center">
         <div class="col-10 col-lg-10 {{ col_body() }}">
-            <form method="POST" class="form-inline mb-2">                                
-                {{ form.csrf_token }}
-                <div class="form-row">
-                    <div class="col">{{ form.sender_address(class="form-control", type="email", placeholder="introduzca email...")}}</div>
-                    <div class="col">{{ form.send_btn(class="btn btn-primary")}}</div>
-                    <div class="col">{{ form.print_btn(class="btn btn-info", onclick="print()")}}</div>
-                </div>                       
-            </form>
+            <table class="mb-2">
+                <tr>
+                    <td>
+                        <form method="POST" class="form-inline">                                
+                            {{ form.csrf_token }}
+                            <div class="form-row">
+                                <div class="col">{{ form.sender_address(class="form-control", type="email", placeholder="introduzca email...")}}</div>
+                                <div class="col">{{ form.send_btn(class="btn btn-primary")}}</div>                    
+                            </div>                       
+                        </form>
+                    </td>
+                    <td>
+                        <button class="btn btn-info" onclick="print()">Imprimir</button>
+                    </td>
+                </tr>
+            </table>            
+
             <table class="table">
                 {% for key, value in report.items() %}
                 <tr>
@@ -35,4 +44,5 @@
     </div>
 </div>
 
+<script src="{{ url_for('static', filename='js/shared.js') }}"></script>  
 {% endblock %}

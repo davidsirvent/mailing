@@ -15,23 +15,26 @@ from sqlalchemy.orm.exc import NoResultFound
 import locale
 import time
 
-from .models import Config
-from .forms import ConfigForm, MsgForm, ReportForm, UploadForm
+from .models import Config, Recipient
+from .forms import ConfigForm, MsgForm, ReportForm, UploadForm, DeleteForm
 
 
 main = Blueprint('main', __name__)
 
+
+# Main View
 @main.route('/', methods=['GET', 'POST'])
 def index():
 
     db.create_all()
-
-    #recipients = []
-    recipients = ["david.error#gmail.commmmasdfasdfadfmdddasdfmmd", "1david.error#gmail.com", "dav1id.error#gmail.com", "david.error1#gmail.com", "david.erro2r#gmail.com", "david3.error#gmail.com", "d4avid.error#gmail.com", "david.error3#gmail.com", "da3vid.error#gmail.com", "david.error#gmail.c3om", "david.error3#gmail.com", "david.er4ror#gmail.com", "asdf", "asdfsa", "asdfasgas", "asdfasdfasdf"]
+        
+    recipients = []
+    for item in Recipient.query.all():
+        recipients.append(item.recipient)
 
     report = {}
 
-    
+    # Send mails
     form = MsgForm()
     if form.send_btn.data:
         if form.validate_on_submit():
@@ -50,31 +53,61 @@ def index():
                 for err in errorMessages:
                     flash("ERROR: " + err)
 
-
+    # Upload contacts (recipients)
     formFile = UploadForm()
     if formFile.upload_btn.data:
         if formFile.validate_on_submit():
             recipients = []           
             for line in formFile.file.data.readlines():
                 recipients.append(line.decode("utf-8"))
+                db.session.add(Recipient(recipient=line.decode("utf-8")))
+            db.session.commit()
+
+        else:
+            for field, errorMessages in form.errors.items():
+                for err in errorMessages:
+                    flash("ERROR: " + err)
+    
+    # Delete contacts    
+    formDelete = DeleteForm()    
+    if formDelete.delete_btn.data:
+        if formDelete.validate_on_submit():
+            recipients = []           
+            Recipient.query.delete()
+            db.session.commit()
+
+        else:
+            for field, errorMessages in form.errors.items():
+                for err in errorMessages:
+                    flash("ERROR: " + err)    
+
+    return render_template('main/index.html', form=form, formFile=formFile, formDelete=formDelete ,recipients=recipients)
+
+
+# Report view (when mailing is sent)
+@main.route('/report', methods=['GET', 'POST'])
+def report():
+    report = session['report']
+    
+    form = ReportForm()
+    if form.send_btn.data:
+        if form.validate_on_submit():
+            msg = '<html><h1>Infome de Mailing</h1>'
+            msg = msg + '<table style="border:1px solid #cecece; padding: 2px;">'
+            for k, v in report.items():
+                msg = msg + '<tr><td style="border:1px solid #cecece; padding: 2px;">{0}</td><td style="border:1px solid #cecece; padding: 2px;">{1}</td></tr>'.format(k, v)
+            msg = msg + '</table></html>'
+            send(recipient=form.sender_address.data, subject="Informe del mailing", message=msg)
 
         else:
             for field, errorMessages in form.errors.items():
                 for err in errorMessages:
                     flash("ERROR: " + err)
 
-        
-    return render_template('main/index.html', form=form, formFile=formFile, recipients=recipients)
-
-
-@main.route('/report', methods=['GET', 'POST'])
-def report():
-    report = session['report']    
-    form = ReportForm()
-
     return render_template('main/report.html', report=report, form=form)
 
 
+# Config view
 @main.route('/config', methods=['GET', 'POST'])
 def config():
 
@@ -112,12 +145,11 @@ def config():
     return render_template('main/configuration.html', form=form, config=config)
 
 
+# Send one email
 def send(recipient: str, subject: str, message: str):
 
     login_error = ""
-    send_report = ""
-
-    
+    send_report = ""    
 
     # set up the SMTP server (2)
     try:        

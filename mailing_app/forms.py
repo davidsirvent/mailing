@@ -17,9 +17,11 @@ class MsgForm(FlaskForm):
 
 class ReportForm(FlaskForm):
     sender_address = StringField('Correo del remitente', validators=[DataRequired(), Email("Correo no válido.")])
-    send_btn = SubmitField(label='Enviar informe por correo')
-    print_btn = SubmitField(label='Imprimir')
+    send_btn = SubmitField(label='Enviar informe por correo')    
 
 class UploadForm(FlaskForm):
     file = FileField(validators=[DataRequired()])
     upload_btn = SubmitField(label='Subir')
+
+class DeleteForm(FlaskForm):
+    delete_btn = SubmitField(label='Borrar contactos')

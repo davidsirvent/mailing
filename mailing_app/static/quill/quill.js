@@ -8901,7 +8901,7 @@ var Clipboard = function (_Module) {
         this.quill.setContents(this.convert(index), html);
         this.quill.setSelection(0, _quill2.default.sources.SILENT);
       } else {
-        var paste = this.convert(html);
+        var paste = this.convert(html);        
         this.quill.updateContents(new _quillDelta2.default().retain(index).concat(paste), source);
         this.quill.setSelection(index + paste.length(), _quill2.default.sources.SILENT);
       }

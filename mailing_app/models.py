@@ -6,3 +6,7 @@ class Config(db.Model):
     password = db.Column(db.String(100))
     smtp_server = db.Column(db.String(100))
     smtp_port = db.Column(db.Integer)
+
+class Recipient(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    recipient = db.Column(db.String(100))

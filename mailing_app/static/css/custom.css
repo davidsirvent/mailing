@@ -18,6 +18,11 @@ tr {
     overflow: hidden;
 }
 
+#contact-overflow {
+    height: 65vh !important;
+    overflow-y: scroll;
+}
+
 #logo { 
     height: 50px;
 }
