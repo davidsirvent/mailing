@@ -69,9 +69,9 @@
                                 {{ form.msg.label() }}
                             </td>
                             <td class="text-right">
-                                <div class="text-right">                                                                        
-                                    <label class="mr-4"><input type="radio" name="editorType" value="editor" onclick="msgEditor()" checked> Editor</label>
-                                    <label><input type="radio" name="editorType" value="upload" onclick="msgFile()"> Subir fichero</label>                                    
+                                <div class="text-right">                                    
+                                    <label class="mr-4"><input id="radioEditor" type="radio" name="editorType" value="editor" onclick="msgEditor()" checked> Editor</label>
+                                    <label><input id="radioMsg" type="radio" name="editorType" value="upload" onclick="msgFile()"> Subir fichero</label>                                    
                                 </div>
                             </td>
                         </tr>
@@ -98,20 +98,26 @@
 
             <!-- File upload option-->
             <div id="msg-file" class="row mb-5 d-none">
-                <div class="col {{ col_body() }}">                    
-                      <form id="upload-msg" class="form-inline" enctype="multipart/form-data" method="POST">
-                          {{ formMsgUpload.csrf_token }}
-                          {{ formMsgUpload.file_msg(class="btn mr-3") }}
-                          {{ formMsgUpload.upload_msg_btn(class="btn btn-info mr-3") }}
-                          {{ formMsgUpload.send_msg_btn(class="btn btn-primary") }}                          
-                      </form>
-                      <div class="w-100 mt-2">
+                <div class="col {{ col_body() }}">
+                    <div class="row">
+                    <form id="upload-msg" class="form-inline" enctype="multipart/form-data" method="POST">
+                        {{ formMsgUpload.csrf_token }}                            
+                        {{ formMsgUpload.file_msg(class="btn mr-3", onclick="uploadBtn()") }}
+                        {{ formMsgUpload.upload_msg_btn(class="btn btn-info mr-3") }}                                                    
+                    </form>
+                    <form id="send-msg" class="form-inline" method="POST">
+                        {{ formMsgFile.csrf_token }}
+                        {{ formMsgFile.subject_msg(class="form-control", type="hidden", required="") }}                        
+                        {{ formMsgFile.send_msg_btn(class="btn btn-primary", onclick="waiting()") }}                          
+                    </form>
+                    </div>
+
+                    <div class="w-100 mt-2">
                         <iframe id="preview" src="{{ url_for('main.preview') }}"></iframe>    
-                      </div>
+                    </div>
                 </div>
-                
-                
             </div>
+
         </div>
     </div>
 </div>

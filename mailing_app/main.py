@@ -16,7 +16,7 @@ import locale
 import time
 
 from .models import Config, Recipient, Content
-from .forms import ConfigForm, MsgForm, ReportForm, UploadForm, DeleteForm, UploadMsgForm
+from .forms import ConfigForm, MsgForm, ReportForm, UploadForm, DeleteForm, UploadMsgForm, MsgFileForm
 
 
 main = Blueprint('main', __name__)
@@ -91,6 +91,25 @@ def index():
                 for err in errorMessages:
                     flash("ERROR: " + err)
     
+    # Send file msg
+    formMsgFile = MsgFileForm()
+    if formMsgFile.send_msg_btn.data:
+        if formMsgFile.validate_on_submit():
+
+            msg = Content.query.get(1).msg
+            for recipient in recipients:
+                result = send(recipient, formMsgFile.subject_msg.data, msg)
+                timestamp = time.strftime('%d %b %Y %H:%M:%S')
+                report[recipient] = result + ' (' + timestamp + ')'
+
+            session['report'] =  report                    
+            return redirect(url_for('main.report', report=report))         
+
+        else:
+            for field, errorMessages in formMsgFile.errors.items():
+                for err in errorMessages:
+                    flash("ERROR: " + err)
+    
 
     # Delete contacts    
     formDelete = DeleteForm()    
@@ -105,7 +124,7 @@ def index():
                 for err in errorMessages:
                     flash("ERROR: " + err)    
     
-    return render_template('main/index.html', form=form, formFile=formFile, formDelete=formDelete, formMsgUpload=formMsgUpload, recipients=recipients)
+    return render_template('main/index.html', form=form, formFile=formFile, formDelete=formDelete, formMsgUpload=formMsgUpload, formMsgFile=formMsgFile, recipients=recipients)
 
 
 # Report view (when mailing is sent)

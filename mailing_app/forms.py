@@ -23,9 +23,12 @@ class UploadForm(FlaskForm):
     file = FileField(validators=[DataRequired()])    
     upload_btn = SubmitField(label='Subir')
 
-class UploadMsgForm(FlaskForm):
+class UploadMsgForm(FlaskForm):    
     file_msg = FileField(validators=[DataRequired()])
-    upload_msg_btn = SubmitField(label='Subir')    
+    upload_msg_btn = SubmitField(label='Subir')        
+
+class MsgFileForm(FlaskForm):
+    subject_msg = StringField('Asunto')
     send_msg_btn = SubmitField(label='Enviar')    
 
 class DeleteForm(FlaskForm):
