@@ -10,3 +10,7 @@ class Config(db.Model):
 class Recipient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     recipient = db.Column(db.String(100))
+
+class Content(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    msg = db.Column(db.String(5000))

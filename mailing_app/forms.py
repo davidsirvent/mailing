@@ -20,8 +20,14 @@ class ReportForm(FlaskForm):
     send_btn = SubmitField(label='Enviar informe por correo')    
 
 class UploadForm(FlaskForm):
-    file = FileField(validators=[DataRequired()])
+    file = FileField(validators=[DataRequired()])    
     upload_btn = SubmitField(label='Subir')
+
+class UploadMsgForm(FlaskForm):
+    file_msg = FileField(validators=[DataRequired()])
+    upload_msg_btn = SubmitField(label='Subir')    
+    send_msg_btn = SubmitField(label='Enviar')    
 
 class DeleteForm(FlaskForm):
     delete_btn = SubmitField(label='Borrar')
+    

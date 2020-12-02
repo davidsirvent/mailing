@@ -15,8 +15,8 @@ from sqlalchemy.orm.exc import NoResultFound
 import locale
 import time
 
-from .models import Config, Recipient
-from .forms import ConfigForm, MsgForm, ReportForm, UploadForm, DeleteForm
+from .models import Config, Recipient, Content
+from .forms import ConfigForm, MsgForm, ReportForm, UploadForm, DeleteForm, UploadMsgForm
 
 
 main = Blueprint('main', __name__)
@@ -52,27 +52,8 @@ def index():
                 for err in errorMessages:
                     flash("ERROR: " + err)
 
-    # Upload msg file
-    formUploadMsg = UploadForm()
-    if formUploadMsg.upload_btn.data:
-        if formUploadMsg.validate_on_submit():
-            msg_txt = ""
-            try:
-                for txt in formUploadMsg.file.data.read():
-                    msg_txt = txt.decode("utf-8")                    
-                    # db.session.add(Recipient(recipient=line))
-            except  Exception as error:
-                flash("ERROR: No se ha podido procesar el fichero")
-            else:
-                pass # db.session.commit()           
-
-        else:
-            for field, errorMessages in form.errors.items():
-                for err in errorMessages:
-                    flash("ERROR: " + err)
-
     # Upload contacts (recipients)
-    formFile = UploadForm()
+    formFile = UploadForm()    
     if formFile.upload_btn.data:
         if formFile.validate_on_submit():
             recipients = []
@@ -81,16 +62,36 @@ def index():
                     line = line.decode("utf-8")
                     recipients.append(line)
                     db.session.add(Recipient(recipient=line))
-            except  Exception as error:
-                flash("ERROR: No se ha podido procesar el fichero")
+            except Exception as error:
+                flash("ERROR: No se ha podido procesar el fichero ")
             else:
                 db.session.commit()           
 
         else:
-            for field, errorMessages in form.errors.items():
+            for field, errorMessages in formFile.errors.items():
                 for err in errorMessages:
                     flash("ERROR: " + err)
     
+    # Upload Message
+    formMsgUpload = UploadMsgForm()
+    if formMsgUpload.upload_msg_btn.data:
+        if formMsgUpload.validate_on_submit():
+            Content.query.delete()
+            try:
+                text = formMsgUpload.file_msg.data.read()
+                text = text.decode("utf-8")                
+                db.session.add(Content(msg=text))
+            except Exception as error:
+                flash("ERROR: No se ha podido procesar el fichero. ")
+            else:
+                db.session.commit()           
+
+        else:
+            for field, errorMessages in formMsgUpload.errors.items():
+                for err in errorMessages:
+                    flash("ERROR: " + err)
+    
+
     # Delete contacts    
     formDelete = DeleteForm()    
     if formDelete.delete_btn.data:
@@ -100,11 +101,11 @@ def index():
             db.session.commit()
 
         else:
-            for field, errorMessages in form.errors.items():
+            for field, errorMessages in formDelete.errors.items():
                 for err in errorMessages:
                     flash("ERROR: " + err)    
-
-    return render_template('main/index.html', form=form, formFile=formFile, formDelete=formDelete, formUploadMsg=formUploadMsg ,recipients=recipients)
+    
+    return render_template('main/index.html', form=form, formFile=formFile, formDelete=formDelete, formMsgUpload=formMsgUpload, recipients=recipients)
 
 
 # Report view (when mailing is sent)
@@ -129,6 +130,17 @@ def report():
 
     return render_template('main/report.html', report=report, form=form)
 
+# Preview view
+@main.route('/preview')
+def preview():    
+    html = None
+
+    try:
+        html = Content.query.get(1).msg
+    except Exception as error:
+        html = "<h1>No se ha cargado ningún fichero</h1>"
+
+    return html
 
 # Config view
 @main.route('/config', methods=['GET', 'POST'])
