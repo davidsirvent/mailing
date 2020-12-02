@@ -8,7 +8,7 @@ I developed it for my own use as I needed a simple tool that would allow me to s
 
 Although it is fully functional by itself, it is intended to be included in a larger project.
 
-What Just Mail does:
+**What Just Mail does:**
 
 - Allows you to configure and send a mailing in a few steps. Configure server data, import contacts, layout the mail and launch.
 
@@ -16,13 +16,14 @@ What Just Mail does:
 
 - Due to its simplicity, the code is easy to understand and allows it to be integrated into other projects with minimal effort.
 
-What Just Mail does NOT do:
+**What Just Mail does NOT do:**
 
 - It is not a tracking or marketing tool (like MailChimp). It does not monitor whether the emails have been opened or not. Nor does it manage unsubscriptions or anything similar.
 
 - It does not have an API. All work is done from the user interface.
 
-Instalation (The use of a virtual environment is recommended)
+
+**Instalation (The use of a virtual environment is recommended)**
 ```
 git clone https://github.com/davidsirvent/mailing.git
 cd mailing
@@ -30,6 +31,5 @@ pip install -r requirements.txt
 ```
  
 
-Legal disclaimer:
-
-It is the responsibility of each user or developer to ensure that they comply with the applicable data protection regulations in their case.
+_Legal disclaimer:_
+_It is the responsibility of each user or developer to ensure that they comply with the applicable data protection regulations in their case._
