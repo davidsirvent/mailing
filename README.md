@@ -22,12 +22,12 @@ What Just Mail does NOT do:
 
 - It does not have an API. All work is done from the user interface.
 
-Instalation (The use of a virtual environment is recommended (like venv))
-'''
+Instalation (The use of a virtual environment is recommended)
+```
 git clone https://github.com/davidsirvent/mailing.git
 cd mailing
 pip install -r requirements.txt
-'''
+```
  
 
 Legal disclaimer:
