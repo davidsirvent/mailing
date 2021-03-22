@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash, request, redirect, url_for, session
+from flask import Blueprint, render_template, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from . import db
 
@@ -15,7 +15,7 @@ from sqlalchemy.orm.exc import NoResultFound
 import locale
 import time
 
-from .models import Config, Recipient, Content
+from .models import Config, Recipient, Content, Result
 from .forms import ConfigForm, MsgForm, ReportForm, UploadForm, DeleteForm, UploadMsgForm, MsgFileForm
 
 
@@ -96,14 +96,19 @@ def index():
     if formMsgFile.send_msg_btn.data:
         if formMsgFile.validate_on_submit():
 
-            msg = Content.query.get(1).msg
-            for recipient in recipients:
-                result = send(recipient, formMsgFile.subject_msg.data, msg)
-                timestamp = time.strftime('%d %b %Y %H:%M:%S')
-                report[recipient] = result + ' (' + timestamp + ')'
+            # Delete previous info on Result table.
+            Result.query.delete()
 
-            session['report'] =  report                    
-            return redirect(url_for('main.report', report=report))         
+            msg = Content.query.get(1).msg            
+            for recipient in recipients:
+                result_msg = send(recipient, formMsgFile.subject_msg.data, msg)                
+                timestamp = time.strftime('%d %b %Y %H:%M:%S')
+                result_msg = result_msg + ' [' + formMsgFile.subject_msg.data + ']' + ' (' + timestamp + ')'
+                result = Result(email=recipient, result=result_msg)
+                db.session.add(result)
+                db.session.commit()
+            
+            return redirect(url_for('main.report'))         
 
         else:
             for field, errorMessages in formMsgFile.errors.items():
@@ -129,16 +134,16 @@ def index():
 
 # Report view (when mailing is sent)
 @main.route('/report', methods=['GET', 'POST'])
-def report():
-    report = session['report']
+def report():    
+    report = Result.query.all()
     
     form = ReportForm()
     if form.send_btn.data:
         if form.validate_on_submit():
             msg = '<html><h1>Infome de Mailing</h1>'
             msg = msg + '<table style="border:1px solid #cecece; padding: 2px;">'
-            for k, v in report.items():
-                msg = msg + '<tr><td style="border:1px solid #cecece; padding: 2px;">{0}</td><td style="border:1px solid #cecece; padding: 2px;">{1}</td></tr>'.format(k, v)
+            for result in report:            
+                msg = msg + '<tr><td style="border:1px solid #cecece; padding: 2px;">{0}</td><td style="border:1px solid #cecece; padding: 2px;">{1}</td></tr>'.format(result.email, result.result)
             msg = msg + '</table></html>'
             send(recipient=form.sender_address.data, subject="Informe del mailing", message=msg)
 

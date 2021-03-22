@@ -14,3 +14,8 @@ class Recipient(db.Model):
 class Content(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     msg = db.Column(db.String(5000))
+
+class Result(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100))
+    result = db.Column(db.String(100))

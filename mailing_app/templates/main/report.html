@@ -29,14 +29,14 @@
             </table>            
 
             <table class="table">
-                {% for key, value in report.items() %}
+                {% for item in report %}
                 <tr>
-                {% if 'INFO' in value %}
+                {% if 'INFO' in item.result %}
                 {% set msg_type = 'text-success' %}
-                {% elif 'ERROR' in value %}
+                {% elif 'ERROR' in item.result %}
                 {% set msg_type = 'text-danger' %}
                 {% endif %}
-                    <td>{{ key }}</td><td class="{{ msg_type }}">{{ value }}</td>
+                    <td>{{ item.email }}</td><td class="{{ msg_type }}">{{ item.result }}</td>
                 </tr>
                 {% endfor %}            
             </table>            

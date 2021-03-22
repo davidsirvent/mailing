@@ -1,5 +1,6 @@
-# Archivos propios de cada uno
+# Custom config
 configuration.py
+db.sqlite
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
